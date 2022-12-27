@@ -28,9 +28,9 @@ describe("Customer repository tests", () => {
     const customer = new Customer("1", "Lucian Tavares")
     const address = new Address("Rua 123", 99, "88888-888", "Criciúma")
     customer.Address = address
-    
+
     await customerRepository.create(customer)
-    
+
     const customerModel = await CustomerModel.findOne({ where: { id: "1" } })
 
     expect(customerModel.toJSON()).toStrictEqual({
@@ -40,7 +40,7 @@ describe("Customer repository tests", () => {
       rewardPoints: customer.rewardPoints,
       street: address.street,
       number: address.number,
-      zipcode: address.zipcode,
+      zipcode: address.zip,
       city: address.city
     })
   })
@@ -56,7 +56,7 @@ describe("Customer repository tests", () => {
     customer.changeName("Lucian Silva")
     await customerRepository.update(customer)
     const customerModel = await CustomerModel.findOne({ where: { id: "1" } })
-    
+
     expect(customerModel.toJSON()).toStrictEqual({
       id: "1",
       name: customer.name,
@@ -64,7 +64,7 @@ describe("Customer repository tests", () => {
       rewardPoints: customer.rewardPoints,
       street: address.street,
       number: address.number,
-      zipcode: address.zipcode,
+      zipcode: address.zip,
       city: address.city
     })
   })
@@ -113,5 +113,4 @@ describe("Customer repository tests", () => {
     expect(customers).toContainEqual(customer2)
 
   })
-
 })

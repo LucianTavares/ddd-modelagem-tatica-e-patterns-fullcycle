@@ -41,6 +41,10 @@ export default class Customer {
     this.validate()
   }
 
+  get Address(): Address {
+    return this._address
+  }
+
   changeAddress(address: Address) {
     this._address = address
   }
