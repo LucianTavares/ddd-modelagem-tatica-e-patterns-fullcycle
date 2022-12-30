@@ -2,8 +2,9 @@ import Order from "../../domain/entity/order";
 import OrderModel from "../db/sequelize/model/order.model";
 import OrderItemModel from "../db/sequelize/model/order-item.model";
 import OrderItem from "../../domain/entity/order_item";
+import OrderRepositoryInterface from "../../domain/repository/order-repository.interface";
 
-export default class OrderRepository {
+export default class OrderRepository implements OrderRepositoryInterface {
 
   async create(entity: Order): Promise<void> {
     await OrderModel.create({
@@ -25,38 +26,26 @@ export default class OrderRepository {
   }
 
   async update(entity: Order): Promise<void> {
-    OrderItemModel.findAll({ where: { order_id: entity.id } }).then((orderItems) => {
-      entity.items.forEach((item) => {
-        if (!orderItems.find(orderItem => orderItem.id === item.id)) {
-          OrderItemModel.create({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            product_id: item.productId,
-            quantity: item.quantity,
-            order_id: entity.id
-          })
-        }
+    const sequelize = OrderModel.sequelize;
+    await sequelize.transaction(async (t) => {
+      await OrderItemModel.destroy({
+        where: { order_id: entity.id },
+        transaction: t,
       });
+      const items = entity.items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        product_id: item.productId,
+        quantity: item.quantity,
+        order_id: entity.id,
+      }));
+      await OrderItemModel.bulkCreate(items, { transaction: t });
+      await OrderModel.update(
+        { total: entity.total() },
+        { where: { id: entity.id }, transaction: t }
+      );
     });
-
-    await OrderModel.update(
-      {
-        id: entity.id,
-        customer_id: entity.customerId,
-        total: entity.total(),
-        items: entity.items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          product_id: item.productId,
-          quantity: item.quantity,
-        })),
-      },
-      {
-        where: { id: entity.id },
-      },
-    );
   }
 
   async find(id: string): Promise<Order> {
