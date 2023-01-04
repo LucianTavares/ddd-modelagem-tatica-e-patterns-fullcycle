@@ -1,7 +1,8 @@
+import EventDispatcher from "../../@shared/event/event-dispatcher";
 import CustomerCreatedEvent from "./customer-created.event";
 import SendEmailWhenCustomerIsCreatedHandler from "./handler/send-email-when-customer-is-created.handler";
 import SendMessageWhenCustomerIsCreatedHandler from "./handler/send-message-when-customer-is-created.handler";
-import EventDispatcher from "../@shared/event-dispatcher"
+
 
 describe("Domain events tests created customer", () => {
 

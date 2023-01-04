@@ -1,9 +1,9 @@
-import CustomerRepository from "../../../infrastructure/repository/customer.repository"
-import Address from "../../entity/address"
-import Customer from "../../entity/customer"
-import EventDispatcher from "../@shared/event-dispatcher"
-import CustomerChangeAddressEvent from "./customer-change-address-event"
-import SendMessageWhenChangeAddressEvent from "./handler/send-message-when-change-address-event"
+import EventDispatcher from "../../@shared/event/event-dispatcher";
+import Customer from "../entity/customer";
+import Address from "../entity/value-object/address";
+import CustomerChangeAddressEvent from "./customer-change-address-event";
+import SendMessageWhenChangeAddressEvent from "./handler/send-message-when-change-address-event";
+
 
 describe("Domain events tests change address customer", () => {
 
@@ -28,7 +28,5 @@ describe("Domain events tests change address customer", () => {
     eventDispatcher.notify(customerChangeAddressEvent)
 
     expect(spyEventHandlerChangeAddress).toHaveBeenCalled()
-
   })
-
 })
